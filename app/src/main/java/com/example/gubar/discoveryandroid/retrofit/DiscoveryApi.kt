@@ -1,7 +1,7 @@
 package com.example.gubar.discoveryandroid.retrofit
 
 import com.example.gubar.discoveryandroid.client.Client
-import retrofit2.Call
+import io.reactivex.Observable
 import retrofit2.http.GET
 
 /**
@@ -9,5 +9,5 @@ import retrofit2.http.GET
  */
 interface DiscoveryApi {
     @GET("/clients")
-    fun getClients() : Call<List<Client>>
+    fun getClients() : Observable<List<Client>>
 }

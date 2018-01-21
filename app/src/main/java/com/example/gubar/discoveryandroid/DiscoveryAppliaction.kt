@@ -3,6 +3,7 @@ package com.example.gubar.discoveryandroid
 import android.app.Application
 import com.example.gubar.discoveryandroid.retrofit.DiscoveryApi
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 /**
@@ -19,6 +20,7 @@ class DiscoveryAppliaction : Application() {
 
         fun getRetrofitApi(): DiscoveryApi {
             val retrofit = Retrofit.Builder()
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create())
                     .baseUrl(BASE_URL)
                     .build()

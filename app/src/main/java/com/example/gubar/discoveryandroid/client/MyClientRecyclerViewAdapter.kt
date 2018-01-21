@@ -9,7 +9,7 @@ import com.example.gubar.discoveryandroid.R
 
 import com.example.gubar.discoveryandroid.client.ClientFragment.OnListFragmentInteractionListener
 
-class MyClientRecyclerViewAdapter(private val mValues: List<Client>, private val mListener: OnListFragmentInteractionListener?) : RecyclerView.Adapter<MyClientRecyclerViewAdapter.ViewHolder>() {
+class MyClientRecyclerViewAdapter(private val mValues: List<Client>?, private val mListener: OnListFragmentInteractionListener?) : RecyclerView.Adapter<MyClientRecyclerViewAdapter.ViewHolder>() {
 
     public override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -18,14 +18,14 @@ class MyClientRecyclerViewAdapter(private val mValues: List<Client>, private val
     }
 
     public override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.mItem = mValues.get(position)
-        holder.mIdView.text = mValues.get(position).id.toString()
-        holder.mContentView.text = mValues.get(position).toString()
+        holder.mItem = mValues?.get(position)
+        holder.mIdView.text = mValues?.get(position)?.id.toString()
+        holder.mContentView.text = mValues?.get(position).toString()
 
     }
 
     public override fun getItemCount(): Int {
-        return mValues.size
+        return mValues?.size?:0
     }
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {

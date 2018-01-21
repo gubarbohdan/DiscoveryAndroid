@@ -13,6 +13,8 @@ import com.example.gubar.discoveryandroid.DiscoveryAppliaction
 
 import com.example.gubar.discoveryandroid.R
 import com.example.gubar.discoveryandroid.retrofit.DiscoveryApi
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 /**
  * A fragment representing a list of Items.
@@ -29,12 +31,18 @@ class ClientFragment : Fragment() {
     // TODO: Customize parameters
     private var mColumnCount = 1
     private var mListener: OnListFragmentInteractionListener? = null
-    private var mClientList: List<Client>
+    private var mClientList: List<Client>? = null
     private var mRetrofitApi: DiscoveryApi
 
     init {
         mRetrofitApi = DiscoveryAppliaction.getRetrofitApi()
-        mClientList = mRetrofitApi.getClients().execute().body().orEmpty()
+        mRetrofitApi.getClients().observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe({ result ->
+                    mClientList = result
+                }, { error ->
+                    error.printStackTrace()
+                })
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

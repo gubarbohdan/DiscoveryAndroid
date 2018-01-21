@@ -8,10 +8,15 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import com.example.gubar.discoveryandroid.client.Client
+import com.example.gubar.discoveryandroid.client.ClientFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ClientFragment.OnListFragmentInteractionListener {
+    override fun onListFragmentInteraction(item: Client) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +34,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
+
+        if (savedInstanceState == null) {
+            val transaction = supportFragmentManager.beginTransaction()
+            val fragment = ClientFragment.newInstance(1)
+            transaction.replace(R.id.fragmentContainer, fragment)
+            transaction.commit()
+        }
     }
 
     override fun onBackPressed() {
