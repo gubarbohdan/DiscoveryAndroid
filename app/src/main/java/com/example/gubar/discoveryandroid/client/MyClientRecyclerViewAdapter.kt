@@ -20,8 +20,8 @@ class MyClientRecyclerViewAdapter(private val mValues: List<Client>?, private va
     public override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.mItem = mValues?.get(position)
         holder.mIdView.text = mValues?.get(position)?.id.toString()
-        holder.mContentView.text = mValues?.get(position).toString()
-
+        holder.mFirstNameView.text = mValues?.get(position)?.firstName
+        holder.mLastName.text = mValues?.get(position)?.lastName
     }
 
     public override fun getItemCount(): Int {
@@ -30,16 +30,18 @@ class MyClientRecyclerViewAdapter(private val mValues: List<Client>?, private va
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val mIdView: TextView
-        val mContentView: TextView
+        val mFirstNameView: TextView
+        val mLastName: TextView
         var mItem: Client? = null
 
         init {
             mIdView = mView.findViewById(R.id.id)
-            mContentView = mView.findViewById(R.id.content)
+            mFirstNameView = mView.findViewById(R.id.firstName)
+            mLastName = mView.findViewById(R.id.lastName)
         }
 
         public override fun toString(): String {
-            return super.toString() + " '" + mContentView.getText() + "'"
+            return super.toString() + " '" + mFirstNameView.getText() + "'"
         }
     }
 }

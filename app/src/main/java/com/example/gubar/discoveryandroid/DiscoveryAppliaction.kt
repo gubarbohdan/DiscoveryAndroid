@@ -16,7 +16,7 @@ class DiscoveryAppliaction : Application() {
      */
     companion object RetrofitFactory {
 
-        val BASE_URL = "https://127.0.0.1/"
+        val BASE_URL = "http://192.168.0.78:8080"
 
         fun getRetrofitApi(): DiscoveryApi {
             val retrofit = Retrofit.Builder()

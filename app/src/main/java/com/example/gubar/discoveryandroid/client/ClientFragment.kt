@@ -36,13 +36,6 @@ class ClientFragment : Fragment() {
 
     init {
         mRetrofitApi = DiscoveryAppliaction.getRetrofitApi()
-        mRetrofitApi.getClients().observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe({ result ->
-                    mClientList = result
-                }, { error ->
-                    error.printStackTrace()
-                })
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,6 +50,7 @@ class ClientFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.fragment_client_list, container, false)
 
+        getClients(view)
 
         // Set the adapter
         if (view is RecyclerView) {
@@ -69,6 +63,19 @@ class ClientFragment : Fragment() {
             view.adapter = MyClientRecyclerViewAdapter(mClientList, mListener)
         }
         return view
+    }
+
+    private fun getClients(view: View?) {
+        mRetrofitApi.getClients().observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe({ result ->
+                    mClientList = result
+                    if (view is RecyclerView) {
+                        view.adapter = MyClientRecyclerViewAdapter(mClientList, mListener)
+                    }
+                }, { error ->
+                    error.printStackTrace()
+                })
     }
 
 
