@@ -2,6 +2,8 @@ package com.example.gubar.discoveryandroid.client
 
 import android.content.Context
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
@@ -14,6 +16,7 @@ import com.example.gubar.discoveryandroid.R
 import com.example.gubar.discoveryandroid.retrofit.DiscoveryApi
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_client_list.*
 
 /**
  * A fragment representing a list of Items.
@@ -49,29 +52,36 @@ class ClientFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.fragment_client_list, container, false)
 
-        getClients(view)
+        getClients()
+
+        val fab = view.findViewById<FloatingActionButton>(R.id.fab)
+
+        fab.setOnClickListener { parentView ->
+            Snackbar.make(parentView, "Replace with your own action", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
+        }
+
+
 
         // Set the adapter
-        if (view is RecyclerView) {
+        if (list is RecyclerView) {
             val context = view.getContext()
             if (mColumnCount <= 1) {
-                view.layoutManager = LinearLayoutManager(context)
+                list.layoutManager = LinearLayoutManager(context)
             } else {
-                view.layoutManager = GridLayoutManager(context, mColumnCount)
+                list.layoutManager = GridLayoutManager(context, mColumnCount)
             }
-            view.adapter = MyClientRecyclerViewAdapter(mClientList, mListener)
+            list.adapter = MyClientRecyclerViewAdapter(mClientList, mListener)
         }
         return view
     }
 
-    private fun getClients(view: View?) {
+    private fun getClients() {
         mRetrofitApi.getClients().observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe({ result ->
                     mClientList = result
-                    if (view is RecyclerView) {
-                        view.adapter = MyClientRecyclerViewAdapter(mClientList, mListener)
-                    }
+                    list.adapter = MyClientRecyclerViewAdapter(mClientList, mListener)
                 }, { error ->
                     error.printStackTrace()
                 })
