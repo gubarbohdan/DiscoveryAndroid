@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.gubar.discoveryandroid.DiscoveryAppliaction
 
 import com.example.gubar.discoveryandroid.R
 import com.example.gubar.discoveryandroid.retrofit.DiscoveryApi
@@ -35,7 +34,7 @@ class ClientFragment : Fragment() {
     private var mRetrofitApi: DiscoveryApi
 
     init {
-        mRetrofitApi = DiscoveryAppliaction.getRetrofitApi()
+        mRetrofitApi = DiscoveryApi.getRetrofitApi()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
