@@ -1,5 +1,7 @@
 package com.example.gubar.discoveryandroid.client
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -14,6 +16,7 @@ import android.view.ViewGroup
 
 import com.example.gubar.discoveryandroid.R
 import com.example.gubar.discoveryandroid.retrofit.DiscoveryApi
+import com.example.gubar.discoveryandroid.viewmodel.ClientsListViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_client_list.*
@@ -33,26 +36,28 @@ class ClientFragment : Fragment() {
     // TODO: Customize parameters
     private var mColumnCount = 1
     private var mListener: OnListFragmentInteractionListener? = null
-    private var mClientList: List<Client>? = null
-    private var mRetrofitApi: DiscoveryApi
+    private var mClientList: MutableList<Client> = mutableListOf()
+    private var mAdapter: MyClientRecyclerViewAdapter? = null
 
-    init {
-        mRetrofitApi = DiscoveryApi.getRetrofitApi()
-    }
+    private var clientsListViewModel: ClientsListViewModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        initViewModel()
         if (arguments != null) {
             mColumnCount = arguments.getInt(ARG_COLUMN_COUNT)
         }
+    }
+
+    private fun initViewModel() {
+        clientsListViewModel = ViewModelProviders.of(this).get(ClientsListViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.fragment_client_list, container, false)
 
-        getClients()
 
         val fab = view.findViewById<FloatingActionButton>(R.id.fab)
 
@@ -60,6 +65,8 @@ class ClientFragment : Fragment() {
             Snackbar.make(parentView, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
+
+        val list = view.findViewById<RecyclerView>(R.id.list)
 
 
 
@@ -71,20 +78,26 @@ class ClientFragment : Fragment() {
             } else {
                 list.layoutManager = GridLayoutManager(context, mColumnCount)
             }
-            list.adapter = MyClientRecyclerViewAdapter(mClientList, mListener)
         }
+        initRecyclerView(list)
+        getClients()
+
+
         return view
     }
 
+    private fun initRecyclerView(list: RecyclerView) {
+        mAdapter = MyClientRecyclerViewAdapter(mClientList, mListener)
+        list.adapter = mAdapter
+    }
+
     private fun getClients() {
-        mRetrofitApi.getClients().observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe({ result ->
-                    mClientList = result
-                    list.adapter = MyClientRecyclerViewAdapter(mClientList, mListener)
-                }, { error ->
-                    error.printStackTrace()
-                })
+        clientsListViewModel?.loadClients()?.observe(this, Observer { clients ->
+            clients?.forEach{
+                mClientList.add(it)
+            }
+            mAdapter?.notifyDataSetChanged()
+        })
     }
 
 
