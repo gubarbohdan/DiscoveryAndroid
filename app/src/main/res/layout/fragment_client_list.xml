@@ -13,8 +13,8 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
-        tools:context="com.example.gubar.discoveryandroid.client.ClientFragment"
-        tools:listitem="@layout/fragment_client" />
+        tools:context="com.example.gubar.discoveryandroid.clientlist.ClientListFragment"
+        tools:listitem="@layout/item_client_list" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

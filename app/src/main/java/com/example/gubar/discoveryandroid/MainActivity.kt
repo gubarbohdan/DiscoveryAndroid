@@ -1,20 +1,29 @@
 package com.example.gubar.discoveryandroid
 
+import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import com.example.gubar.discoveryandroid.client.Client
 import com.example.gubar.discoveryandroid.client.ClientFragment
+import com.example.gubar.discoveryandroid.data.Client
+import com.example.gubar.discoveryandroid.clientlist.ClientListFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ClientFragment.OnListFragmentInteractionListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ClientListFragment.OnListFragmentInteractionListener, ClientFragment.OnFragmentInteractionListener {
     override fun onListFragmentInteraction(item: Client) {
+        val transaction = supportFragmentManager.beginTransaction()
+        val fragment = ClientFragment.newInstance(item.id)
+        transaction.replace(R.id.fragmentContainer, fragment)
+        transaction.addToBackStack("Client"+item.id)
+        transaction.commit()
+    }
+
+    override fun onFragmentInteraction(uri: Uri) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -32,7 +41,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         if (savedInstanceState == null) {
             val transaction = supportFragmentManager.beginTransaction()
-            val fragment = ClientFragment.newInstance(1)
+            val fragment = ClientListFragment.newInstance(1)
             transaction.replace(R.id.fragmentContainer, fragment)
             transaction.commit()
         }

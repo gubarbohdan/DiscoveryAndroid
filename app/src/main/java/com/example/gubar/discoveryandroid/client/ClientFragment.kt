@@ -3,9 +3,8 @@ package com.example.gubar.discoveryandroid.client
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
@@ -13,100 +12,112 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 
 import com.example.gubar.discoveryandroid.R
-import com.example.gubar.discoveryandroid.retrofit.DiscoveryApi
-import com.example.gubar.discoveryandroid.viewmodel.ClientsListViewModel
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_client_list.*
+import com.example.gubar.discoveryandroid.clientlist.MyClientRecyclerViewAdapter
+import com.example.gubar.discoveryandroid.data.Client
+import com.example.gubar.discoveryandroid.data.Trip
+import kotlinx.android.synthetic.main.fragment_client.*
 
 /**
- * A fragment representing a list of Items.
- *
- *
- * Activities containing this fragment MUST implement the [OnListFragmentInteractionListener]
- * interface.
- */
-/**
- * Mandatory empty constructor for the fragment manager to instantiate the
- * fragment (e.g. upon screen orientation changes).
+ * A simple [Fragment] subclass.
+ * Activities that contain this fragment must implement the
+ * [ClientFragment.OnFragmentInteractionListener] interface
+ * to handle interaction events.
+ * Use the [ClientFragment.newInstance] factory method to
+ * create an instance of this fragment.
  */
 class ClientFragment : Fragment() {
-    // TODO: Customize parameters
-    private var mColumnCount = 1
-    private var mListener: OnListFragmentInteractionListener? = null
-    private var mClientList: MutableList<Client> = mutableListOf()
-    private var mAdapter: MyClientRecyclerViewAdapter? = null
 
-    private var clientsListViewModel: ClientsListViewModel? = null
+    private var mClientsListViewModel: ClientViewModel? = null
+
+    // TODO: Rename and change types of parameters
+    private var mClientId: Long = 0
+
+    private var mClient: Client? = null
+
+    private var mClientTripList: MutableList<Trip> = mutableListOf()
+
+    private var mAdapter: MyClientTripsRecyclerViewAdapter? = null
+    private var mListener: OnFragmentInteractionListener? = null
+
+    private lateinit var mFirstNameTextView: TextView
+    private lateinit var mLastNameTextView: TextView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        initViewModel()
         if (arguments != null) {
-            mColumnCount = arguments.getInt(ARG_COLUMN_COUNT)
+            mClientId = arguments.getLong(CLIENT_ID)
         }
+        initViewModel()
     }
 
     private fun initViewModel() {
-        clientsListViewModel = ViewModelProviders.of(this).get(ClientsListViewModel::class.java)
+        mClientsListViewModel = ViewModelProviders.of(this).get(ClientViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val view = inflater!!.inflate(R.layout.fragment_client_list, container, false)
+        // Inflate the layout for this fragment
+        val view = inflater!!.inflate(R.layout.fragment_client, container, false)
 
 
-        val fab = view.findViewById<FloatingActionButton>(R.id.fab)
+        mFirstNameTextView = view.findViewById<TextView>(R.id.firstName)
+        mLastNameTextView = view.findViewById<TextView>(R.id.lastName)
 
-        fab.setOnClickListener { parentView ->
-            Snackbar.make(parentView, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
+        setView()
 
-        val list = view.findViewById<RecyclerView>(R.id.list)
+        val list = view.findViewById<RecyclerView>(R.id.clientTripsRecycler)
 
 
 
         // Set the adapter
         if (list is RecyclerView) {
             val context = view.getContext()
-            if (mColumnCount <= 1) {
-                list.layoutManager = LinearLayoutManager(context)
-            } else {
-                list.layoutManager = GridLayoutManager(context, mColumnCount)
-            }
+            list.layoutManager = LinearLayoutManager(context)
         }
         initRecyclerView(list)
-        getClients()
-
+        getClient()
 
         return view
     }
 
+    private fun setView() {
+        mFirstNameTextView.text = mClient?.firstName
+        mLastNameTextView.text = mClient?.lastName
+    }
+
     private fun initRecyclerView(list: RecyclerView) {
-        mAdapter = MyClientRecyclerViewAdapter(mClientList, mListener)
+        mAdapter = MyClientTripsRecyclerViewAdapter(mClientTripList, mListener)
         list.adapter = mAdapter
     }
 
-    private fun getClients() {
-        clientsListViewModel?.loadClients()?.observe(this, Observer { clients ->
-            clients?.forEach{
-                mClientList.add(it)
+    private fun getClient() {
+        mClientsListViewModel?.getClient(mClientId)?.observe(this, Observer { client ->
+            mClient = client
+            setView()
+            client?.trips?.forEach{
+                mClientTripList.add(it)
             }
-            mAdapter?.notifyDataSetChanged()
+            mAdapter?.notifyDataSetChanged();
         })
     }
 
+    // TODO: Rename method, update argument and hook method into UI event
+    fun onButtonPressed(uri: Uri) {
+        if (mListener != null) {
+            mListener!!.onFragmentInteraction(uri)
+        }
+    }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        if (context is OnListFragmentInteractionListener) {
+        if (context is OnFragmentInteractionListener) {
             mListener = context
         } else {
-            throw RuntimeException(context!!.toString() + " must implement OnListFragmentInteractionListener")
+            throw RuntimeException(context!!.toString() + " must implement OnFragmentInteractionListener")
         }
     }
 
@@ -124,23 +135,31 @@ class ClientFragment : Fragment() {
      *
      * See the Android Training lesson [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html) for more information.
      */
-    interface OnListFragmentInteractionListener {
+    interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onListFragmentInteraction(item: Client)
+        fun onFragmentInteraction(uri: Uri)
     }
 
     companion object {
+        // TODO: Rename parameter arguments, choose names that match
+        // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+        private val CLIENT_ID = "mClientId"
 
-        // TODO: Customize parameter argument names
-        private val ARG_COLUMN_COUNT = "column-count"
-
-        // TODO: Customize parameter initialization
-        fun newInstance(columnCount: Int): ClientFragment {
+        /**
+         * Use this factory method to create a new instance of
+         * this fragment using the provided parameters.
+         *
+         * @param param1 Parameter 1.
+         * @param param2 Parameter 2.
+         * @return A new instance of fragment ClientFragment.
+         */
+        // TODO: Rename and change types and number of parameters
+        fun newInstance(clientId: Long): ClientFragment {
             val fragment = ClientFragment()
             val args = Bundle()
-            args.putInt(ARG_COLUMN_COUNT, columnCount)
+            args.putLong(CLIENT_ID, clientId)
             fragment.arguments = args
             return fragment
         }
     }
-}
+}// Required empty public constructor

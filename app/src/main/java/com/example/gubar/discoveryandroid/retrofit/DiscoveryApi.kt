@@ -1,11 +1,12 @@
 package com.example.gubar.discoveryandroid.retrofit
 
-import com.example.gubar.discoveryandroid.client.Client
+import com.example.gubar.discoveryandroid.data.Client
 import io.reactivex.Observable
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 
 /**
  * Created by gubar on 21.01.2018.
@@ -13,6 +14,9 @@ import retrofit2.http.GET
 interface DiscoveryApi {
     @GET("/clients")
     fun getClients() : Observable<List<Client>>
+
+    @GET("/clients/{id}")
+    fun getClientById(@Path("id") id: Long) : Observable<Client>
 
 
 

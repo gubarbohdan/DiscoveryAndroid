@@ -1,6 +1,7 @@
 package com.example.gubar.discoveryandroid.di
 
-import com.example.gubar.discoveryandroid.viewmodel.ClientsListViewModel
+import com.example.gubar.discoveryandroid.client.ClientViewModel
+import com.example.gubar.discoveryandroid.clientlist.ClientsListViewModel
 import dagger.Component
 import javax.inject.Singleton
 
@@ -8,4 +9,6 @@ import javax.inject.Singleton
 @Singleton
 interface AppComponent {
     fun inject(clientsListViewModel: ClientsListViewModel)
+    fun inject(clientViewModel: ClientViewModel)
+
 }

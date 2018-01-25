@@ -2,7 +2,7 @@ package com.example.gubar.discoveryandroid.repository
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import com.example.gubar.discoveryandroid.client.Client
+import com.example.gubar.discoveryandroid.data.Client
 import com.example.gubar.discoveryandroid.db.DiscoveryDb
 import com.example.gubar.discoveryandroid.retrofit.DiscoveryApi
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -25,6 +25,19 @@ class ClientRepository @Inject constructor(
                     clientsLiveData.value = clientsList
                 }, { t: Throwable? -> t!!.printStackTrace() })
         return clientsLiveData
+    }
+
+    fun getClientById(id: Long): LiveData<Client> {
+        val clientObservable = discoveryApi.getClientById(id)
+        val clientLiveData = MutableLiveData<Client>()
+        clientObservable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({client ->
+                    clientLiveData.value = client
+                }, {t: Throwable? -> t!!.printStackTrace()})
+
+        return clientLiveData
     }
 
 }
