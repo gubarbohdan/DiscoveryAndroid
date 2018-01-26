@@ -15,21 +15,23 @@ class ClientRepository @Inject constructor(
         private val discoveryDb: DiscoveryDb,
         private val discoveryApi: DiscoveryApi
 ) {
+    private val clientsListLiveData = MutableLiveData<List<Client>>()
+
     fun getAllClients(): LiveData<List<Client>> {
         val clientObservable = discoveryApi.getClients()
-        val clientsLiveData = MutableLiveData<List<Client>>()
         clientObservable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ clientsList ->
-                    clientsLiveData.value = clientsList
+                    clientsListLiveData.value = clientsList
                 }, { t: Throwable? -> t!!.printStackTrace() })
-        return clientsLiveData
+        return clientsListLiveData
     }
+
+    private val clientLiveData = MutableLiveData<Client>()
 
     fun getClientById(id: Long): LiveData<Client> {
         val clientObservable = discoveryApi.getClientById(id)
-        val clientLiveData = MutableLiveData<Client>()
         clientObservable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -154,10 +154,12 @@ class ClientFragment : Fragment() {
          * @return A new instance of fragment ClientFragment.
          */
         // TODO: Rename and change types and number of parameters
-        fun newInstance(clientId: Long): ClientFragment {
+        fun newInstance(clientId: Long?): ClientFragment {
             val fragment = ClientFragment()
             val args = Bundle()
-            args.putLong(CLIENT_ID, clientId)
+            if (clientId != null) {
+                args.putLong(CLIENT_ID, clientId)
+            }
             fragment.arguments = args
             return fragment
         }

@@ -5,7 +5,9 @@ import io.reactivex.Observable
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 
 /**
@@ -18,10 +20,13 @@ interface DiscoveryApi {
     @GET("/clients/{id}")
     fun getClientById(@Path("id") id: Long) : Observable<Client>
 
+    @POST("/clients")
+    fun createClient(@Body client: Client) : Observable<Client>
+
 
 
     /**
-     * Companion object to create the GithubApiService
+     * Companion object to create the DiscoveryApi
      */
     companion object RetrofitFactory {
 

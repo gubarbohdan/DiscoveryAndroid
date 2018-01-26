@@ -54,13 +54,11 @@ class ClientListFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.fragment_client_list, container, false)
 
-        mClientList.clear()
-
         val fab = view.findViewById<FloatingActionButton>(R.id.fab)
 
         fab.setOnClickListener { parentView ->
-            Snackbar.make(parentView, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+            val createClientDialog = CreateClientDialog()
+            createClientDialog.show(fragmentManager, "create-client")
         }
 
         val list = view.findViewById<RecyclerView>(R.id.list)
@@ -90,6 +88,8 @@ class ClientListFragment : Fragment() {
 
     private fun getClients() {
         clientsListViewModel?.loadClients()?.observe(this, Observer { clients ->
+            mClientList.clear()
+
             clients?.forEach{
                 mClientList.add(it)
             }
