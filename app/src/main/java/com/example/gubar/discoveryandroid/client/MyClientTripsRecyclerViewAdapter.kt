@@ -9,6 +9,8 @@ import com.example.gubar.discoveryandroid.R
 import com.example.gubar.discoveryandroid.clientlist.ClientListFragment
 import com.example.gubar.discoveryandroid.data.Client
 import com.example.gubar.discoveryandroid.data.Trip
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Created by bohdanhu on 25.01.18.
@@ -27,8 +29,8 @@ class MyClientTripsRecyclerViewAdapter(private val mValues: List<Trip>?, private
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.mItem = mValues?.get(position)
-        holder.mFromDateView.text = mValues?.get(position)?.fromDate.toString()
-        holder.mToDateView.text = mValues?.get(position)?.toDate.toString()
+        holder.mFromDateView.text = SimpleDateFormat("dd/MM/yyyy").format(Date(mValues?.get(position)?.fromDate?:System.currentTimeMillis()))
+        holder.mToDateView.text = SimpleDateFormat("dd/MM/yyyy").format(Date(mValues?.get(position)?.toDate?:System.currentTimeMillis()))
         holder.mPriceView.text = mValues?.get(position)?.price.toString()
     }
 

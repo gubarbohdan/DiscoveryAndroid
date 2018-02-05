@@ -23,10 +23,8 @@ class ClientViewModel : ViewModel() {
     private var client: LiveData<Client>? = null
 
     fun getClient(id: Long): LiveData<Client>? {
-        if (client == null) {
             client = MutableLiveData<Client>()
             client = clientRepository.getClientById(id)
-        }
         return client
     }
 
