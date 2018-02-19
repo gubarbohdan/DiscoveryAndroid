@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 
 import com.example.gubar.discoveryandroid.R
+import com.example.gubar.discoveryandroid.clientlist.ClientsListViewModel
 import com.example.gubar.discoveryandroid.clientlist.MyClientRecyclerViewAdapter
 import com.example.gubar.discoveryandroid.data.Client
 import com.example.gubar.discoveryandroid.data.Trip
@@ -30,7 +31,7 @@ import kotlinx.android.synthetic.main.fragment_client.*
  */
 class ClientFragment : Fragment() {
 
-    private var mClientsListViewModel: ClientViewModel? = null
+    private var mClientsListViewModel: ClientsListViewModel? = null
 
     // TODO: Rename and change types of parameters
     private var mClientId: Long = 0
@@ -55,7 +56,7 @@ class ClientFragment : Fragment() {
     }
 
     private fun initViewModel() {
-        mClientsListViewModel = ViewModelProviders.of(this).get(ClientViewModel::class.java)
+        mClientsListViewModel = ViewModelProviders.of(this).get(ClientsListViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
@@ -95,13 +96,16 @@ class ClientFragment : Fragment() {
     }
 
     private fun getClient() {
-        mClientsListViewModel?.getClient(mClientId)?.observe(this, Observer { client ->
-            mClient = client
-            setView()
-            client?.trips?.forEach{
+        mClientsListViewModel?.loadClients()?.observe(this, Observer { clients ->
+            mClient = clients?.find {
+                it.id?.equals(mClientId) ?: false
+            }
+            mClientTripList.clear()
+            mClient?.trips?.forEach {
                 mClientTripList.add(it)
             }
-            mAdapter?.notifyDataSetChanged();
+            setView()
+            mAdapter?.notifyDataSetChanged()
         })
     }
 

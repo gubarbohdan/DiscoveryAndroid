@@ -1,6 +1,7 @@
 package com.example.gubar.discoveryandroid.retrofit
 
 import com.example.gubar.discoveryandroid.data.Client
+import com.example.gubar.discoveryandroid.data.Hotel
 import io.reactivex.Observable
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -23,6 +24,9 @@ interface DiscoveryApi {
     @POST("/clients")
     fun createClient(@Body client: Client) : Observable<Client>
 
+    @GET("/hotels")
+    fun getHotels() : Observable<List<Hotel>>
+
 
 
     /**
@@ -30,7 +34,7 @@ interface DiscoveryApi {
      */
     companion object RetrofitFactory {
 
-        val BASE_URL = "http://192.168.0.78:8080"
+        val BASE_URL = "http://165.227.140.136:8080"
 
         fun getRetrofitApi(): DiscoveryApi {
             val retrofit = Retrofit.Builder()

@@ -11,10 +11,16 @@ import android.view.MenuItem
 import com.example.gubar.discoveryandroid.client.ClientFragment
 import com.example.gubar.discoveryandroid.data.Client
 import com.example.gubar.discoveryandroid.clientlist.ClientListFragment
+import com.example.gubar.discoveryandroid.data.Hotel
+import com.example.gubar.discoveryandroid.hotel.HotelFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ClientListFragment.OnListFragmentInteractionListener, ClientFragment.OnFragmentInteractionListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ClientListFragment.OnListFragmentInteractionListener, ClientFragment.OnFragmentInteractionListener, HotelFragment.OnListFragmentInteractionListener {
+    override fun onListFragmentInteraction(item: Hotel) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun onListFragmentInteraction(item: Client) {
         val transaction = supportFragmentManager.beginTransaction()
         val fragment = ClientFragment.newInstance(item.id)
@@ -75,10 +81,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_clients -> {
-                // Handle the camera action
+                val transaction = supportFragmentManager.beginTransaction()
+                val fragment = ClientListFragment.newInstance(1)
+                transaction.addToBackStack(null)
+                transaction.replace(R.id.fragmentContainer, fragment)
+                transaction.commit()
             }
             R.id.nav_trips -> {
 
+            }
+            R.id.nav_hotels -> {
+                val transaction = supportFragmentManager.beginTransaction()
+                val fragment = HotelFragment.newInstance(1)
+                transaction.addToBackStack(null)
+                transaction.replace(R.id.fragmentContainer, fragment)
+                transaction.commit()
             }
             R.id.nav_share -> {
 

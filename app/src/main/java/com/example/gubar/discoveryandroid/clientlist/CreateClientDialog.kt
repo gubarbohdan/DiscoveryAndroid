@@ -48,15 +48,15 @@ class CreateClientDialog : DialogFragment() {
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(layout)
                 // Add action buttons
-                .setPositiveButton(R.string.dialog_create_ok_button, { dialog, id ->
+                .setPositiveButton(R.string.dialog_create_ok_button, { _, _ ->
                     val client = Client(firstName = firstName.text.toString(), lastName = lastName.text.toString(), email = email.text.toString())
                     discoveryApi.createClient(client).subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe({client ->
+                            .subscribe({
                                 clientRepository.getAllClients()
                             }, {t: Throwable? -> t!!.printStackTrace()})
                 })
-                .setNegativeButton(R.string.dialog_create_cancel_button, { dialog, id -> this@CreateClientDialog.getDialog().cancel() })
+                .setNegativeButton(R.string.dialog_create_cancel_button, { _, _ -> this@CreateClientDialog.dialog.cancel() })
         return builder.create()
     }
 }
